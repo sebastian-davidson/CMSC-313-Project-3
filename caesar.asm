@@ -15,15 +15,8 @@ strbuf: resb BUFSIZE
 	global _start
 _start:
 	;; while (read_str() > 0) { write_str(); }
-.loop_begin:
 	call read_str
-	cmp rax, 0
-	jl .loop_end
-	call write_str
-	jmp .loop_begin
-.loop_end:
-	
-	xor edi, edi		; Exit with exit code 0
+	call strbuf_to_integer
 	jmp exit_program
 
 ;;; str_length: get the length of a zero-terminated string.
