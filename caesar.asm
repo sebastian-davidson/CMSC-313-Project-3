@@ -17,6 +17,7 @@ _start:
 	;; while (read_str() > 0) { write_str(); }
 	call read_str
 	call strbuf_to_integer
+	mov rdi, rax
 	jmp exit_program
 
 ;;; str_length: get the length of a zero-terminated string.
@@ -147,8 +148,8 @@ strbuf_to_integer:
 	cmp byte [rdi], '9'
 	ja .loop_end
 
-	mov r8l, [rdi]
-	sub r8l, '0'
+	movsx r8, byte [rdi]
+	sub r8, '0'
 
 	lea r9, [rax + rax * 8]	; r9 = rax * 10
 	add r9, rax
@@ -157,12 +158,12 @@ strbuf_to_integer:
 	inc rdi
 	jmp .loop_begin
 .loop_end:
-	mul r10
+	imul r10
 	ret			; return n * sign; // (rax holds n's value)
 	
 
 ;; char strbuf[BUFSIZE];
-;; int strbuf_to_integer(void) {
+;; int64_t strbuf_to_integer(void) {
 ;;         int64_t n, tmp1, tmp2, sign;
 ;;         char *p;
 ;;         n = 0;
