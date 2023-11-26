@@ -6,6 +6,9 @@ SYS_WRITE:equ 1	 ; System call number for the write syscall
 STDIN_FD:equ 0
 STDOUT_FD:equ 1
 	
+shift_val_prompt: db "Enter a shift value between -25 and 25 (included)", 10, 0
+string_prompt: db "Enter a string greater than 8 characters", 10, 0
+
 	section .bss
 	;; The string buffer for reading a string.
 strbuf: resb BUFSIZE
@@ -131,8 +134,6 @@ strbuf_to_integer:
 	;; r9 stores tmp2
 	;; r10 holds the sign
 	xor eax, eax
-	xor r8d, r8d
-	xor r9d, r9d
 	lea rdi, [rel strbuf]
 
 	cmp byte [rdi], '-'
@@ -184,5 +185,19 @@ strbuf_to_integer:
 ;;         p++;
 ;;         goto loop;
 ;; loop_end:
-;;         return n;
+;;         return n * sign;
 ;; }
+
+
+;;; Procedure bounds_check:
+;;; If the number in RDI is within range [-25, 25] (inclusive),
+;;; return 1 in RAX. Otherwise, return 0.
+bounds_check:
+	xor eax, eax
+	cmp rdi, 25
+	jg .no
+	cmp rdi, -25
+	jl .no
+	inc eax ; within range
+.no:
+	ret
