@@ -293,10 +293,10 @@ strbuf_to_integer:
 
 	cmp byte [rdi], '-'
 	je .negative
-	mov r10, 1
+	xor r10d, r10d
 	jmp .loop_begin
 .negative:
-	mov r10, -1
+	mov r10d, 1
 	inc rdi
 .loop_begin:
 	cmp byte [rdi], '0'
@@ -315,7 +315,10 @@ strbuf_to_integer:
 	inc rdi
 	jmp .loop_begin
 .loop_end:
-	imul r10
+	test r10d, r10d
+	jz .done
+	neg rax
+.done:
 	ret			; return n * sign; // (rax holds n's value)
 	
 
