@@ -112,7 +112,6 @@ shift_char:
 
 	movzx rcx, byte [rdi]	; Otherwise, store the letter in RCX.
 	dec eax
-	test eax, eax
 	jz .is_upper
 	jmp .is_lower
 .is_upper:
@@ -328,8 +327,8 @@ strbuf_to_integer:
 ;;         char *p;
 ;;         n = 0;
 ;;         p = &strbuf[0];
-;;         if (*p != '-') sign = 1;
-;;         else { sign = -1; p++; }
+;;         if (*p != '-') sign = 0;
+;;         else { sign = 1; p++; }
 ;; loop:
 ;;         if (*p < '0') goto loop_end;
 ;;         if (*p > '9') goto loop_end;
@@ -344,7 +343,7 @@ strbuf_to_integer:
 ;;         p++;
 ;;         goto loop;
 ;; loop_end:
-;;         return n * sign;
+;;         return sign? -n: n;
 ;; }
 
 ;;; Procedure skip_spaces_rdi:
